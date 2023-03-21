@@ -1,2 +1,17 @@
 ---
-requires_ansible: '>= 2.11.0'  # Use '>= 2.9.10' instead, if needed
+plugin_routing:
+  action:
+    command:
+      redirect: cisco.ios_cm.ios_cm
+    config:
+      redirect: cisco.ios_cm.ios_cm
+    facts:
+      redirect: cisco.ios_cm.ios_cm
+  modules:
+    command:
+      redirect: cisco.ios_cm.ios_cm_command
+    config:
+      redirect: cisco.ios_cm.ios_cm_config
+    facts:
+      redirect: cisco.ios_cm.ios_cm_facts
+requires_ansible: ">=2.9.10"
