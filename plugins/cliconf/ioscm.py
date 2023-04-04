@@ -422,7 +422,7 @@ class Cliconf(CliconfBase):
         results = []
         requests = []
         # commit confirm specific attributes
-        commit_confirm = self.get_option("commit_confirm_immediate")
+        # commit_confirm = self.get_option("commit_confirm_immediate")
         if commit:
             self.configure()
             for line in to_list(candidate):
@@ -435,8 +435,8 @@ class Cliconf(CliconfBase):
                     requests.append(cmd)
 
             self.send_command("end")
-            if commit_confirm:
-                self.send_command("configure confirm")
+            # if commit_confirm:
+            #     self.send_command("configure confirm")
 
         else:
             raise ValueError("check mode is not supported")
