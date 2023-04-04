@@ -433,7 +433,7 @@ class Cliconf(CliconfBase):
                 if cmd != "end" and cmd[0] != "!":
                     results.append(self.send_command(**line))
                     requests.append(cmd)
-
+            self.send_command("commit")
             self.send_command("end")
             # if commit_confirm:
             #     self.send_command("configure confirm")

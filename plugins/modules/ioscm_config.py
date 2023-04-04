@@ -426,12 +426,6 @@ def save_config(module, result):
         )
 
 
-import debugpy
-
-debugpy.listen(3000)
-debugpy.wait_for_client()
-
-
 def main():
     """main entry point for module execution"""
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
