@@ -32,7 +32,7 @@ description:
   to configure IOS devices.
 version_added: 1.0.0
 extends_documentation_fragment:
-- cisco.ios_cm.ios_cm
+- cisco.ioscm.ioscm
 notes:
   - Tested against Cisco IOSXE Version 17.3 on CML.
   - This module works with connection C(network_cli).
@@ -87,7 +87,7 @@ options:
 """
 EXAMPLES = r"""
 - name: Run show version on remote devices
-  cisco.ios_cm.ios_cm_command:
+  cisco.ioscm.ioscm_command:
     commands: show version'
 
 # output-
@@ -119,7 +119,7 @@ EXAMPLES = r"""
 # }
 
 - name: Run show version and check to see if output contains IOS
-  cisco.ios_cm.ios_cm_command:
+  cisco.ioscm.ioscm_command:
     commands: show version
     wait_for: result[0] contains IOS
 
@@ -154,7 +154,7 @@ EXAMPLES = r"""
 # }
 
 - name: Run multiple commands on remote nodes
-  cisco.ios_cm.ios_cm_command:
+  cisco.ioscm.ioscm_command:
     commands:
     - show version
     - show interfaces
@@ -217,7 +217,7 @@ EXAMPLES = r"""
 
 
 - name: Run multiple commands and evaluate the output
-  cisco.ios_cm.ios_cm_command:
+  cisco.ioscm.ioscm_command:
     commands:
     - show version
     - show interfaces
@@ -252,7 +252,7 @@ EXAMPLES = r"""
 # }
 
 - name: Run commands that require answering a prompt
-  cisco.ios_cm.ios_cm_command:
+  cisco.ioscm.ioscm_command:
     commands:
     - command: 'clear counters GigabitEthernet2'
       prompt: 'Clear "show interface" counters on this interface \[confirm\]'
@@ -308,7 +308,7 @@ EXAMPLES = r"""
 # }
 
 - name: Run commands with complex values like special characters in variables
-  cisco.ios_cm.ios_cm_command:
+  cisco.ioscm.ioscm_command:
     commands: ["{{ 'test aaa group TEST ' ~ user ~ ' ' ~ password ~ ' new-code' }}"]
   vars:
     user: "dummy"
@@ -368,7 +368,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     transform_commands,
 )
 
-from ansible_collections.cisco.ios_cm.plugins.module_utils.network.ios_cm.ios_cm import (
+from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import (
     run_commands,
 )
 

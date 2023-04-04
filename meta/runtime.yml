@@ -4,14 +4,14 @@ plugin_routing:
     command:
       redirect: cisco.ioscm.ioscm
     config:
-      redirect: cisco.ios_cm.ios_cm
+      redirect: cisco.ioscm.ioscm
     facts:
-      redirect: cisco.ios_cm.ios_cm
+      redirect: cisco.ioscm.ioscm
   modules:
     command:
       redirect: cisco.ioscm.ioscm_command
     config:
-      redirect: cisco.ios_cm.ios_cm_config
+      redirect: cisco.ioscm.ioscm_config
     facts:
-      redirect: cisco.ios_cm.ios_cm_facts
+      redirect: cisco.ioscm.ioscm_facts
 requires_ansible: ">=2.9.10"

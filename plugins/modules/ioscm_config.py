@@ -29,7 +29,7 @@ description:
   sections in a deterministic way.
 version_added: 1.0.0
 extends_documentation_fragment:
-- cisco.ios_cm.ios_cm
+- cisco.ioscm.ioscm
 notes:
   - Tested against Cisco IOSXE Version 17.3 on CML.
   - Abbreviated commands are NOT idempotent, see
@@ -225,18 +225,18 @@ options:
 """
 EXAMPLES = """
 - name: Configure top level configuration
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines: hostname {{ inventory_hostname }}
 
 - name: Configure interface settings
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines:
     - description test interface
     - ip address 172.31.1.1 255.255.255.0
     parents: interface Ethernet1
 
 - name: Configure ip helpers on multiple interfaces
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines:
     - ip helper-address 172.26.1.10
     - ip helper-address 172.26.3.8
@@ -247,7 +247,7 @@ EXAMPLES = """
   - interface GigabitEthernet1
 
 - name: Configure policer in Scavenger class
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines:
     - conform-action transmit
     - exceed-action drop
@@ -257,7 +257,7 @@ EXAMPLES = """
     - police cir 64000
 
 - name: Load new acl into device
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines:
     - 10 permit ip host 192.0.2.1 any log
     - 20 permit ip host 192.0.2.2 any log
@@ -269,22 +269,22 @@ EXAMPLES = """
     match: exact
 
 - name: Check the running-config against master config
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     diff_against: intended
     intended_config: "{{ lookup('file', 'master.cfg') }}"
 
 - name: Check the startup-config against the running-config
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     diff_against: startup
     diff_ignore_lines:
     - ntp clock .*
 
 - name: Save running to startup when modified
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     save_when: modified
 
 - name: For idempotency, use full-form commands
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines:
       # - shut
     - shutdown
@@ -294,7 +294,7 @@ EXAMPLES = """
 # Set boot image based on comparison to a group_var (version) and the version
 # that is returned from the `ios_facts` module
 - name: Setting boot image
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     lines:
     - no boot system
     - boot system flash bootflash:{{new_image}}
@@ -302,12 +302,12 @@ EXAMPLES = """
   when: ansible_net_version != version
 
 - name: Render a Jinja2 template onto an IOS device
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     backup: yes
     src: ios_template.j2
 
 - name: Configurable backup path
-  cisco.ios_cm.ios_cm_config:
+  cisco.ioscm.ioscm_config:
     src: ios_template.j2
     backup: yes
     backup_options:
@@ -369,7 +369,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.c
     dumps,
 )
 
-from ansible_collections.cisco.ios_cm.plugins.module_utils.network.ios_cm.ios_cm import (
+from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import (
     get_config,
     get_connection,
     get_defaults_flag,
@@ -452,7 +452,7 @@ def main():
     mutually_exclusive = [("lines", "src"), ("parents", "src")]
     required_if = [
         ("match", "strict", ["lines"]),
-        ("match", "exact", ["lines"]),
+        ("match", "exact", ["lines", "src"], True),
         ("replace", "block", ["lines"]),
         ("diff_against", "intended", ["intended_config"]),
     ]

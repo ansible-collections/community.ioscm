@@ -4,7 +4,7 @@
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
-The facts class for ios_cm
+The facts class for ioscm
 this file validates each subset of facts and selectively
 calls the appropriate facts gathering function
 """
@@ -19,7 +19,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.f
     FactsBase,
 )
 
-from ansible_collections.cisco.ios_cm.plugins.module_utils.network.ios_cm.facts.legacy.base import (
+from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.facts.legacy.base import (
     Config,
     Default,
     Hardware,
@@ -35,7 +35,7 @@ FACT_RESOURCE_SUBSETS = dict()
 
 
 class Facts(FactsBase):
-    """The fact class for ios_cm"""
+    """The fact class for ioscm"""
 
     VALID_LEGACY_GATHER_SUBSETS = frozenset(FACT_LEGACY_SUBSETS.keys())
     VALID_RESOURCE_SUBSETS = frozenset(FACT_RESOURCE_SUBSETS.keys())
@@ -44,7 +44,7 @@ class Facts(FactsBase):
         super(Facts, self).__init__(module)
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
-        """Collect the facts for ios_cm
+        """Collect the facts for ioscm
         :param legacy_facts_type: List of legacy facts types
         :param resource_facts_type: List of resource fact types
         :param data: previously collected conf
