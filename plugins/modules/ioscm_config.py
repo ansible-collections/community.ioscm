@@ -20,7 +20,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 DOCUMENTATION = """
-module: ios_cm_config
+module: ioscm_config
 author: Sagar Paul (@KB-perByte)
 short_description: Module to manage configuration sections.
 description:
