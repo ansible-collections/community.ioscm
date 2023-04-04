@@ -24,10 +24,10 @@ __metaclass__ = type
 DOCUMENTATION = """
 author:
 - Ansible Networking Team (@ansible-network)
-name: ios
+name: ioscm
 short_description: Use ios cliconf to run command on Cisco IOS platform
 description:
-- This ios plugin provides low level abstraction apis for sending and receiving CLI
+- This ioscm plugin provides low level abstraction apis for sending and receiving CLI
   commands from Cisco IOS network devices.
 version_added: 1.0.0
 options:
@@ -46,68 +46,6 @@ options:
 """
 
 EXAMPLES = """
-# NOTE - IOS waits for a `configure confirm` when the configure terminal
-# command executed is `configure terminal revert timer <timeout>` within the timeout
-# period for the configuration to commit successfully, else a rollback
-# happens.
-
-# Use commit confirm with timeout and confirm the commit explicitly
-
-- name: Example commit confirmed
-  vars:
-    ansible_ios_commit_confirm_timeout: 1
-  tasks:
-    - name: "Commit confirmed with timeout"
-      cisco.ios.ios_hostname:
-        state: merged
-        config:
-          hostname: R1
-
-    - name: "Confirm the Commit"
-      cisco.ios.ios_command:
-        commands:
-          - configure confirm
-
-# Commands fired
-# - configure terminal revert timer 1 (cliconf specific)
-# - hostname R1 (from hostname resource module)
-# - configure confirm (from ios_command module)
-
-# Use commit confirm with timeout and confirm the commit via cliconf
-
-- name: Example commit confirmed
-  vars:
-    ansible_ios_commit_confirm_immediate: True
-    ansible_ios_commit_confirm_timeout: 3
-  tasks:
-    - name: "Commit confirmed with timeout"
-      cisco.ios.ios_hostname:
-        state: merged
-        config:
-          hostname: R1
-
-# Commands fired
-# - configure terminal revert timer 3 (cliconf specific)
-# - hostname R1 (from hostname resource module)
-# - configure confirm (cliconf specific)
-
-# Use commit confirm via cliconf using default timeout
-
-- name: Example commit confirmed
-  vars:
-    ansible_ios_commit_confirm_immediate: True
-  tasks:
-    - name: "Commit confirmed with timeout"
-      cisco.ios.ios_hostname:
-        state: merged
-        config:
-          hostname: R1
-
-# Commands fired
-# - configure terminal revert timer 1 (cliconf specific with default timeout)
-# - hostname R1 (from hostname resource module)
-# - configure confirm (cliconf specific)
-
 """
 
 import json
