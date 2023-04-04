@@ -24,39 +24,13 @@ __metaclass__ = type
 DOCUMENTATION = """
 author:
 - Ansible Networking Team (@ansible-network)
-name: ios_cm
-short_description: Use ios_cm cliconf to run command on Cisco IOSXE as controller mode platform
+name: ios
+short_description: Use ios cliconf to run command on Cisco IOS platform
 description:
-- This ios_cm plugin provides low level abstraction apis for sending and receiving CLI
+- This ios plugin provides low level abstraction apis for sending and receiving CLI
   commands from Cisco IOS network devices.
 version_added: 1.0.0
 options:
-  commit_confirm_immediate:
-    type: boolean
-    default: false
-    description:
-    - Enable or disable commit confirm mode.
-    - Confirms the configuration pushed after a custom/ default timeout.(default 1 minute).
-    - For custom timeout configuration set commit_confirm_timeout value.
-    - On commit_confirm_immediate default value for commit_confirm_timeout is considered 1 minute
-      when variable in not explicitly declared.
-    env:
-    - name: ANSIBLE_IOS_COMMIT_CONFIRM_IMMEDIATE
-    vars:
-    - name: ansible_ios_commit_confirm_immediate
-  commit_confirm_timeout:
-    type: int
-    description:
-    - Commits the configuration on a trial basis for the time
-      specified in minutes.
-    - Using commit_confirm_timeout without specifying commit_confirm_immediate would
-      need an explicit C(configure confirm) using the ios_command module
-      to confirm/commit the changes made.
-    - Refer to example for a use case demonstration.
-    env:
-    - name: ANSIBLE_IOS_COMMIT_CONFIRM_TIMEOUT
-    vars:
-    - name: ansible_ios_commit_confirm_timeout
   config_commands:
     description:
     - Specifies a list of commands that can make configuration changes
@@ -72,6 +46,67 @@ options:
 """
 
 EXAMPLES = """
+# NOTE - IOS waits for a `configure confirm` when the configure terminal
+# command executed is `configure terminal revert timer <timeout>` within the timeout
+# period for the configuration to commit successfully, else a rollback
+# happens.
+
+# Use commit confirm with timeout and confirm the commit explicitly
+
+- name: Example commit confirmed
+  vars:
+    ansible_ios_commit_confirm_timeout: 1
+  tasks:
+    - name: "Commit confirmed with timeout"
+      cisco.ios.ios_hostname:
+        state: merged
+        config:
+          hostname: R1
+
+    - name: "Confirm the Commit"
+      cisco.ios.ios_command:
+        commands:
+          - configure confirm
+
+# Commands fired
+# - configure terminal revert timer 1 (cliconf specific)
+# - hostname R1 (from hostname resource module)
+# - configure confirm (from ios_command module)
+
+# Use commit confirm with timeout and confirm the commit via cliconf
+
+- name: Example commit confirmed
+  vars:
+    ansible_ios_commit_confirm_immediate: True
+    ansible_ios_commit_confirm_timeout: 3
+  tasks:
+    - name: "Commit confirmed with timeout"
+      cisco.ios.ios_hostname:
+        state: merged
+        config:
+          hostname: R1
+
+# Commands fired
+# - configure terminal revert timer 3 (cliconf specific)
+# - hostname R1 (from hostname resource module)
+# - configure confirm (cliconf specific)
+
+# Use commit confirm via cliconf using default timeout
+
+- name: Example commit confirmed
+  vars:
+    ansible_ios_commit_confirm_immediate: True
+  tasks:
+    - name: "Commit confirmed with timeout"
+      cisco.ios.ios_hostname:
+        state: merged
+        config:
+          hostname: R1
+
+# Commands fired
+# - configure terminal revert timer 1 (cliconf specific with default timeout)
+# - hostname R1 (from hostname resource module)
+# - configure confirm (cliconf specific)
 
 """
 
@@ -184,33 +219,96 @@ class Cliconf(CliconfBase):
                 % (diff_replace, ", ".join(option_values["diff_replace"])),
             )
 
-        # prepare candidate configuration
-        candidate_obj = NetworkConfig(indent=1)
-        want_src, want_banners = self._extract_banners(candidate)
-        candidate_obj.load(want_src)
+        cand_pattern = r"(?P<parent>^\w.*\n?)(?P<child>(?:\s+.*\n?)*)"
+        # remove blank lines
+        candidate = re.sub("\n\n", "\n", candidate)
+        candidates = re.findall(cand_pattern, candidate, re.M)
 
-        if running and diff_match != "none":
-            # running configuration
-            have_src, have_banners = self._extract_banners(running)
-            running_obj = NetworkConfig(
-                indent=1, contents=have_src, ignore_lines=diff_ignore_lines
-            )
-            configdiffobjs = candidate_obj.difference(
-                running_obj,
-                path=path,
-                match=diff_match,
-                replace=diff_replace,
-            )
+        diff["config_diff"] = ""
+        diff["banner_diff"] = {}
 
+        # exact plus src support. src can have multiple sections as candidates
+        # e.g policy-map foo, policy-map bar, policy-map baz etc.
+        if candidates and not path and diff_match == "exact":
+            for _candidate in candidates:
+                path = [_candidate[0].strip()]
+                _candidate = "".join(_candidate)
+                _candidate_obj = NetworkConfig(indent=1)
+                _candidate_obj.load(_candidate)
+
+                running_obj = NetworkConfig(
+                    indent=1,
+                    contents=running,
+                    ignore_lines=diff_ignore_lines,
+                )
+
+                try:
+                    have_lines = running_obj.get_block(path)
+                except ValueError:
+                    have_lines = []
+                want_lines = _candidate_obj.get_block(path)
+
+                negates = ""
+                negated_parents = []
+                for line in have_lines:
+                    if line not in want_lines:
+                        negates += "".join(
+                            f"{i}\n"
+                            for i in line.parents
+                            if i not in negates and i not in negated_parents
+                        )
+
+                        if line.has_children:
+                            negated_parents.append(line.text)
+
+                        if not any(i in negated_parents for i in line.parents):
+                            negates += f"no {line}\n"
+
+                diff["config_diff"] += negates
+
+                wants = ""
+                for line in want_lines:
+                    if line not in have_lines:
+                        wants += "".join(
+                            f"{i}\n" for i in line.parents if i not in wants
+                        )
+                        wants += f"{line}\n"
+
+                diff["config_diff"] += wants
+
+            diff["config_diff"] = diff["config_diff"].rstrip()
         else:
-            configdiffobjs = candidate_obj.items
-            have_banners = {}
+            # The "original" code moved to this else-section
+            # prepare candidate configuration
+            candidate_obj = NetworkConfig(indent=1)
+            want_src, want_banners = self._extract_banners(candidate)
+            candidate_obj.load(want_src)
 
-        diff["config_diff"] = (
-            dumps(configdiffobjs, "commands") if configdiffobjs else ""
-        )
-        banners = self._diff_banners(want_banners, have_banners)
-        diff["banner_diff"] = banners if banners else {}
+            if running and diff_match != "none":
+                # running configuration
+                have_src, have_banners = self._extract_banners(running)
+                running_obj = NetworkConfig(
+                    indent=1,
+                    contents=have_src,
+                    ignore_lines=diff_ignore_lines,
+                )
+                configdiffobjs = candidate_obj.difference(
+                    running_obj,
+                    path=path,
+                    match=diff_match,
+                    replace=diff_replace,
+                )
+
+            else:
+                configdiffobjs = candidate_obj.items
+                have_banners = {}
+
+            diff["config_diff"] = (
+                dumps(configdiffobjs, "commands") if configdiffobjs else ""
+            )
+            banners = self._diff_banners(want_banners, have_banners)
+            diff["banner_diff"] = banners if banners else {}
+
         return diff
 
     @enable_mode
@@ -220,45 +318,7 @@ class Cliconf(CliconfBase):
         status of commit_confirm
         :return: None
         """
-        if self.get_option("commit_confirm_timeout") or self.get_option(
-            "commit_confirm_immediate"
-        ):
-            commit_timeout = (
-                self.get_option("commit_confirm_timeout")
-                if self.get_option("commit_confirm_timeout")
-                else 1
-            )  # add default timeout not default: 1 to support above or operation
-
-            persistent_command_timeout = self._connection.get_option(
-                "persistent_command_timeout"
-            )
-            # check archive state
-            archive_state = self.send_command("show archive")
-            rollback_state = self.send_command("show archive config rollback timer")
-
-            if persistent_command_timeout > commit_timeout * 60:
-                raise ValueError(
-                    "ansible_command_timeout can't be greater than commit_confirm_timeout "
-                    "Please adjust and try again",
-                )
-
-            if re.search(r"Archive.*not.enabled", archive_state):
-                raise ValueError(
-                    "commit_confirm_immediate option set, but archiving "
-                    "not enabled on device. "
-                    "Please set up archiving and try again",
-                )
-
-            if not re.search(r"%No Rollback Confirmed Change pending", rollback_state):
-                raise ValueError(
-                    "Existing rollback change already pending. "
-                    "Please resolve by issuing 'configure confirm' "
-                    "or 'configure revert now'",
-                )
-
-            self.send_command(f"configure terminal revert timer {commit_timeout}")
-        else:
-            self.send_command("configure terminal")
+        self.send_command("config-transaction")
 
     @enable_mode
     def edit_config(self, candidate=None, commit=True, replace=None, comment=None):
@@ -371,7 +431,7 @@ class Cliconf(CliconfBase):
         if not self._device_info:
             device_info = {}
 
-            device_info["network_os"] = "iosxe"
+            device_info["network_os"] = "ios"
             # Ensure we are not in config mode
             self._update_cli_prompt_context(config_context=")#", exit_command="end")
             reply = self.get(command="show version")

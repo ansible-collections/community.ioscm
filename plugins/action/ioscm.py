@@ -37,7 +37,7 @@ class ActionModule(ActionNetworkModule):
 
         module_name = self._task.action.split(".")[-1]
         self._config_module = (
-            True if module_name in ["ios_cm_config", "config"] else False
+            True if module_name in ["ioscm_config", "config"] else False
         )
         persistent_connection = self._play_context.connection.split(".")[-1]
         warnings = []

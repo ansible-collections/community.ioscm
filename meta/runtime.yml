@@ -2,14 +2,14 @@
 plugin_routing:
   action:
     command:
-      redirect: cisco.ios_cm.ios_cm
+      redirect: cisco.ioscm.ioscm
     config:
       redirect: cisco.ios_cm.ios_cm
     facts:
       redirect: cisco.ios_cm.ios_cm
   modules:
     command:
-      redirect: cisco.ios_cm.ios_cm_command
+      redirect: cisco.ioscm.ioscm_command
     config:
       redirect: cisco.ios_cm.ios_cm_config
     facts:

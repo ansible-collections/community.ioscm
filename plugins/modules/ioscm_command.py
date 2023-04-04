@@ -20,7 +20,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 DOCUMENTATION = """
-module: ios_cm_command
+module: ioscm_command
 author: Sagar Paul (@KB-perByte)
 short_description: Module to run commands on remote devices.
 description:
