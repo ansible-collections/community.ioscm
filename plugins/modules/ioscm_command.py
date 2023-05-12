@@ -24,7 +24,7 @@ module: ioscm_command
 author: Sagar Paul (@KB-perByte)
 short_description: Module to run commands on remote devices.
 description:
-- Sends arbitrary commands to an ios node and returns the results read from the device.
+- Sends arbitrary commands to an iosxe node running in controller mode and returns the results read from the device.
   This module includes an argument that will cause the module to wait for a specific
   condition before returning or timing out if the condition is not met.
 - This module does not support running commands in configuration mode. Please use
