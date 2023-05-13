@@ -17,6 +17,7 @@ necessary to bring the current configuration to its desired end-state is
 created.
 """
 
+
 import time
 
 from ansible.module_utils._text import to_text
@@ -46,13 +47,21 @@ class Command:
         return self.generate_command()
 
     def parse_commands(self, module, warnings):
+        """Parse commands provided by users.
+
+        Args:
+            module (_type_): Contains module object
+            warnings (_type_): Contains warning if any
+
+        Returns:
+            _type_: Returns back command
+        """
         commands = transform_commands(module)
         if module.check_mode:
             for item in list(commands):
                 if not item["command"].startswith("show"):
                     warnings.append(
-                        "Only show commands are supported when using check mode, not executing %s"
-                        % item["command"],
+                        f"Only show commands are supported when using check mode, not executing { item.get('command') }",
                     )
                     commands.remove(item)
         return commands
@@ -61,37 +70,47 @@ class Command:
         """Generate configuration commands to send based on
         want, have and desired state.
         """
-        warnings = []
+        warnings, conditionals = [], []
         result = {"changed": False, "warnings": warnings}
         commands = self.parse_commands(self.module, warnings)
         wait_for = self.module.params["wait_for"] or []
-        conditionals = []
+
         try:
             conditionals = [Conditional(c) for c in wait_for]
         except AttributeError as exc:
             self.module.fail_json(msg=to_text(exc))
-        retries = self.module.params["retries"]
-        interval = self.module.params["interval"]
-        match = self.module.params["match"]
+
+        conditionals, responses = self.run_commands(conditionals, commands)
+
+        if conditionals:
+            failed_conditions = [item.raw for item in conditionals]
+            msg = "One or more conditional statements have not been satisfied"
+            self.module.fail_json(msg=msg, failed_conditions=failed_conditions)
+
+        result.update({"stdout": responses, "stdout_lines": list(to_lines(responses))})
+        return result
+
+    def run_commands(self, conditionals, commands):
+        """_summary_.
+
+        Args:
+            conditionals (_type_): Conditionals
+            commands (_type_): Commands to run
+
+        Returns:
+            _type_: conditionals exceptions and command responses
+        """
+        retries = self.module.params.get("retries")
         while retries >= 0:
             responses = run_commands(self.module, commands)
             for item in list(conditionals):
                 if item(responses):
-                    if match == "any":
+                    if self.module.params.get("match") == "any":
                         conditionals = []
                         break
                     conditionals.remove(item)
             if not conditionals:
                 break
-            time.sleep(interval)
+            time.sleep(self.module.params.get("interval", 0))
             retries -= 1
-        if conditionals:
-            failed_conditions = [item.raw for item in conditionals]
-            msg = "One or more conditional statements have not been satisfied"
-            self.module.fail_json(msg=msg, failed_conditions=failed_conditions)
-        result.update({"stdout": responses, "stdout_lines": list(to_lines(responses))})
-        return result
-
-    def run_command(self):
-        ping_results = run_commands(self.module, commands=self.result["commands"])
-        return ping_results
+        return conditionals, responses

@@ -5,6 +5,9 @@
 from __future__ import absolute_import, division, print_function
 
 
+"""
+The arg spec for the ioscm_command module
+"""
 __metaclass__ = type
 
 #############################################
@@ -21,10 +24,6 @@ __metaclass__ = type
 # cli_rm_builder.
 #
 #############################################
-
-"""
-The arg spec for the ioscm_command module
-"""
 
 
 class CommandArgs:  # pylint: disable=R0903
