@@ -25,10 +25,10 @@ DOCUMENTATION = """
 author:
 - Ansible Networking Team (@ansible-network)
 name: ioscm
-short_description: Use ios cliconf to run command on Cisco IOS platform
+short_description: Use ios cliconf to run command on Cisco IOSXE platform running in controller mode
 description:
 - This ioscm plugin provides low level abstraction apis for sending and receiving CLI
-  commands from Cisco IOS network devices.
+  commands from Cisco IOSXE network devices, running in controller mode.
 version_added: 1.0.0
 options:
   config_commands:

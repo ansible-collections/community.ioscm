@@ -1,19 +1,17 @@
-# Cisco IOS Collection
+# Community IOSCM Collection
 
-[![CI](https://zuul-ci.org/gated.svg)](https://dashboard.zuul.ansible.com/t/ansible/project/github.com/ansible-collections/cisco.ioscm) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/vyos)](https://codecov.io/gh/ansible-collections/cisco.ios)-->
-[![Codecov](https://codecov.io/gh/ansible-collections/cisco.ios/branch/main/graph/badge.svg)](https://codecov.io/gh/ansible-collections/cisco.ioscm)
 
-The Ansible Cisco IOS collection includes a variety of Ansible content to help automate the management of Cisco IOS and Cisco IOS XE network appliances.
+The Ansible Community IOSCM collection includes a variety of Ansible content to help automate the management of Cisco IOS XE network appliances specifically in controller mode.
 
 This collection has been tested against Cisco IOS XE Version 17.3 on CML.
 
 <!--start requires_ansible-->
 ## Ansible version compatibility
 
-This collection has been tested against following Ansible versions: **>=2.9.10**.
+This collection has been tested against the following Ansible versions: **>=2.9.10**.
 
 For collections that support Ansible 2.9, please ensure you update your `network_os` to use the
-fully qualified collection name (for example, `cisco.ios.ios`).
+fully qualified collection name (for example, `community.ioscm.ioscm`).
 Plugins and modules within a collection may be tested with only specific Ansible versions.
 A collection may contain metadata that identifies these versions.
 PEP440 is the schema used to describe the versions of Ansible.
@@ -21,7 +19,7 @@ PEP440 is the schema used to describe the versions of Ansible.
 
 ### Supported connections
 
-The Cisco IOS collection supports `network_cli` connections.
+The Community IOSCM collection supports `network_cli` connections.
 
 ## Included content
 
@@ -29,21 +27,21 @@ The Cisco IOS collection supports `network_cli` connections.
 ### Cliconf plugins
 Name | Description
 --- | ---
-[cisco.ioscm.ioscm](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_cliconf.rst)|Use ios cliconf to run command on Cisco IOS platform
+[community.ioscm.ioscm](https://github.com/ansible-collections/community.ioscm/blob/main/docs/community.ioscm.ioscm_cliconf.rst)|Use ioscm cliconf to run command on Community IOSCM platform
 
 ### Modules
 Name | Description
 --- | ---
-[cisco.ioscm.ioscm_command](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_command_module.rst)|Module to run commands on remote devices.
-[cisco.ioscm.ioscm_config](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_config_module.rst)|Module to manage configuration sections.
-[cisco.ioscm.ioscm_facts](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_facts_module.rst)|Module to collect facts from remote devices.
-[cisco.ioscm.ioscm_ping](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_ping_module.rst)|Tests reachability using ping from IOS switch.
+[community.ioscm.ioscm_command](https://github.com/ansible-collections/community.ioscm/blob/main/docs/community.ioscm.ioscm_command_module.rst)|Module to run commands on remote devices.
+[community.ioscm.ioscm_config](https://github.com/ansible-collections/community.ioscm/blob/main/docs/community.ioscm.ioscm_config_module.rst)|Module to manage configuration sections.
+[community.ioscm.ioscm_facts](https://github.com/ansible-collections/community.ioscm/blob/main/docs/community.ioscm.ioscm_facts_module.rst)|Module to collect facts from remote devices.
+[community.ioscm.ioscm_ping](https://github.com/ansible-collections/community.ioscm/blob/main/docs/community.ioscm.ioscm_ping_module.rst)|Tests reachability using ping from IOS switch.
 
 <!--end collection content-->
 
 ## Installing this collection
 
-You can install the Cisco IOS collection with the Ansible Galaxy CLI:
+You can install the Community IOSCM collection with the Ansible Galaxy CLI:
 
     ansible-galaxy collection install community.ioscm
 
@@ -52,22 +50,22 @@ You can also include it in a `requirements.yml` file and install it with `ansibl
 ```yaml
 ---
 collections:
-  - name: cisco.ios
+  - name: community.ioscm
 ```
 
 ## Using this collection
 
 This collection includes [network resource modules](https://docs.ansible.com/ansible/latest/network/user_guide/network_resource_modules.html).
 
-### Using modules from the Cisco IOS collection in your playbooks
+### Using modules from the community IOS collection in your playbooks
 
-You can call modules by their Fully Qualified Collection Namespace (FQCN), such as `cisco.ios.ios_l2_interfaces`.
-The following example task replaces configuration changes in the existing configuration on a Cisco IOS network device, using the FQCN:
+You can call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.ioscm.interfaces`.
+The following example task replaces configuration changes in the existing configuration on a Community IOSCM network device, using the FQCN:
 
 ```yaml
 ---
 - name: Replace device configuration of specified L2 interfaces with provided configuration.
-  cisco.ios.ios_l2_interfaces:
+  community.ioscm.ioscm_interfaces:
     config:
       - name: GigabitEthernet0/2
         trunk:
@@ -82,12 +80,12 @@ The following example task replaces configuration changes in the existing config
 
 ### See Also:
 
-- [Cisco IOS Platform Options](https://docs.ansible.com/ansible/latest/network/user_guide/platform_ios.html)
+- [Community IOSCM Platform Options](https://docs.ansible.com/ansible/latest/network/user_guide/platform_ios.html)
 - [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
 
 ## Contributing to this collection
 
-We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the [Cisco IOS collection repository](https://github.com/ansible-collections/cisco.ios). See [Contributing to Ansible-maintained collections](https://docs.ansible.com/ansible/devel/community/contributing_maintained_collections.html#contributing-maintained-collections) for complete details.
+We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the [Community IOSCM collection repository](https://github.com/ansible-collections/community.ioscm). See [Contributing to Ansible-maintained collections](https://docs.ansible.com/ansible/devel/community/contributing_maintained_collections.html#contributing-maintained-collections) for complete details.
 
 You can also join us on:
 
@@ -104,9 +102,9 @@ Please read and familiarize yourself with this document.
 
 ## Release notes
 
-<!--Add a link to a changelog.md file or an external docsite to cover this information. -->
+<!--Add a link to a changelog.md file or an external doc site to cover this information. -->
 
-Release notes are available [here](https://github.com/ansible-collections/cisco.ios/blob/main/CHANGELOG.rst).
+Release notes are available [here](https://github.com/ansible-collections/community.ioscm/blob/main/CHANGELOG.rst).
 
 ## Roadmap
 
@@ -115,10 +113,10 @@ Release notes are available [here](https://github.com/ansible-collections/cisco.
 ## More information
 
 - [Ansible network resources](https://docs.ansible.com/ansible/latest/network/getting_started/network_resources.html)
-- [Ansible Collection overview](https://github.com/ansible-collections/overview)
+- [Ansible Collection Overview](https://github.com/ansible-collections/overview)
 - [Ansible User guide](https://docs.ansible.com/ansible/latest/user_guide/index.html)
-- [Ansible Developer guide](https://docs.ansible.com/ansible/latest/dev_guide/index.html)
-- [Ansible Community code of conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
+- [Ansible Developer Guide](https://docs.ansible.com/ansible/latest/dev_guide/index.html)
+- [Ansible Community Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
 
 ## Licensing
 

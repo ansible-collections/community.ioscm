@@ -26,11 +26,11 @@ description:
   This module includes an argument that will cause the module to wait for a specific
   condition before returning or timing out if the condition is not met.
 - This module does not support running commands in configuration mode. Please use
-  L(ios_config,https://docs.ansible.com/ansible/latest/collections/cisco/ios/ios_config_module.html#ansible-collections-cisco-ios-ios-config-module)
+  L(ios_config,https://docs.ansible.com/ansible/latest/collections/ciscocommunity/ioscm/ioscm_config_module.html#ansible-collections-cisco-ios-ios-config-module)
   to configure IOS devices.
 version_added: 1.0.0
 extends_documentation_fragment:
-- cisco.ioscm.ioscm
+- community.ioscm.ioscm
 notes:
   - Tested against Cisco IOSXE Version 17.3 on CML.
   - This module works with connection C(network_cli).
@@ -86,7 +86,7 @@ options:
 
 EXAMPLES = r"""
 - name: Run show version on remote devices
-  cisco.ioscm.ioscm_command:
+  community.ioscm.ioscm_command:
     commands: show version'
 
 # Task Output
@@ -150,7 +150,7 @@ EXAMPLES = r"""
 #   stdout_lines: <omitted>
 
 - name: Run show version and check to see if output contains IOS
-  cisco.ioscm.ioscm_command:
+  community.ioscm.ioscm_command:
     commands: show version
     wait_for: result[0] contains IOS
 
@@ -200,7 +200,7 @@ EXAMPLES = r"""
 #   stdout_lines: <omitted>
 
 - name: Run multiple commands on remote nodes
-  cisco.ioscm.ioscm_command:
+  community.ioscm.ioscm_command:
     commands:
     - show version
     - show interfaces
@@ -389,7 +389,7 @@ EXAMPLES = r"""
 #   stdout_lines: <omitted>
 
 - name: Run multiple commands and evaluate the output
-  cisco.ioscm.ioscm_command:
+  community.ioscm.ioscm_command:
     commands:
     - show version
     - show interfaces
@@ -436,10 +436,10 @@ failed_conditions:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.argspec.command.command import (
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.argspec.command.command import (
     CommandArgs,
 )
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.config.command.command import (
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.config.command.command import (
     Command,
 )
 

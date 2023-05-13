@@ -2,16 +2,16 @@
 # plugin_routing:
 #   action:
 #     command:
-#       redirect: cisco.ioscm.ioscm
+#       redirect: community.ioscm.ioscm
 #     config:
-#       redirect: cisco.ioscm.ioscm
+#       redirect: community.ioscm.ioscm
 #     facts:
-#       redirect: cisco.ioscm.ioscm
+#       redirect: community.ioscm.ioscm
 #   modules:
 #     command:
-#       redirect: cisco.ioscm.ioscm_command
+#       redirect: community.ioscm.ioscm_command
 #     config:
-#       redirect: cisco.ioscm.ioscm_config
+#       redirect: community.ioscm.ioscm_config
 #     facts:
-#       redirect: cisco.ioscm.ioscm_facts
+#       redirect: community.ioscm.ioscm_facts
 requires_ansible: ">=2.9.10"
