@@ -1,9 +1,9 @@
-.. _cisco.ioscm.ioscm_command_module:
+.. _community.ioscm.ioscm_command_module:
 
 
-*************************
-cisco.ioscm.ioscm_command
-*************************
+*****************************
+community.ioscm.ioscm_command
+*****************************
 
 **Module to run commands on remote devices.**
 
@@ -18,7 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Sends arbitrary commands to an iosxe node running in controller mode and returns the results read from the device. This module includes an argument that will cause the module to wait for a specific condition before returning or timing out if the condition is not met.
-- This module does not support running commands in configuration mode. Please use `ios_config <https://docs.ansible.com/ansible/latest/collections/cisco/ios/ios_config_module.html#ansible-collections-cisco-ios-ios-config-module>`_ to configure IOS devices.
+- This module does not support running commands in configuration mode. Please use `ios_config <https://docs.ansible.com/ansible/latest/collections/ciscocommunity/ioscm/ioscm_config_module.html#ansible-collections-cisco-ios-ios-config-module>`_ to configure IOS devices.
 
 
 
@@ -140,7 +140,7 @@ Examples
 .. code-block:: yaml
 
     - name: Run show version on remote devices
-      cisco.ioscm.ioscm_command:
+      community.ioscm.ioscm_command:
         commands: show version'
 
     # Task Output
@@ -204,7 +204,7 @@ Examples
     #   stdout_lines: <omitted>
 
     - name: Run show version and check to see if output contains IOS
-      cisco.ioscm.ioscm_command:
+      community.ioscm.ioscm_command:
         commands: show version
         wait_for: result[0] contains IOS
 
@@ -254,7 +254,7 @@ Examples
     #   stdout_lines: <omitted>
 
     - name: Run multiple commands on remote nodes
-      cisco.ioscm.ioscm_command:
+      community.ioscm.ioscm_command:
         commands:
         - show version
         - show interfaces
@@ -443,7 +443,7 @@ Examples
     #   stdout_lines: <omitted>
 
     - name: Run multiple commands and evaluate the output
-      cisco.ioscm.ioscm_command:
+      community.ioscm.ioscm_command:
         commands:
         - show version
         - show interfaces

@@ -1,11 +1,11 @@
-.. _cisco.ioscm.ioscm_cliconf:
+.. _community.ioscm.ioscm_cliconf:
 
 
-*****************
-cisco.ioscm.ioscm
-*****************
+*********************
+community.ioscm.ioscm
+*********************
 
-**Use ios cliconf to run command on Cisco IOS platform**
+**Use ios cliconf to run command on Cisco IOSXE platform running in controller mode**
 
 
 Version added: 1.0.0
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This ioscm plugin provides low level abstraction apis for sending and receiving CLI commands from Cisco IOS network devices.
+- This ioscm plugin provides low level abstraction apis for sending and receiving CLI commands from Cisco IOSXE network devices, running in controller mode.
 
 
 
