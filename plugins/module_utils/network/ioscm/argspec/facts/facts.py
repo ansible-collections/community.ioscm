@@ -20,7 +20,7 @@ class FactsArgs(object):
         pass
 
     argument_spec = {
-        "gather_subset": dict(default=["min"], type="list", elements="str"),
-        "gather_network_resources": dict(type="list", elements="str"),
+        "gather_subset": {"default": ["min"], "type": "list", "elements": "str"},
+        "gather_network_resources": {"type": "list", "elements": "str"},
         "available_network_resources": {"type": "bool", "default": False},
     }
