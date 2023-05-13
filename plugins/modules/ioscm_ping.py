@@ -146,10 +146,10 @@ rtt:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.argspec.ping.ping import (
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.argspec.ping.ping import (
     PingArgs,
 )
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.config.ping.ping import Ping
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.config.ping.ping import Ping
 
 
 def main():
