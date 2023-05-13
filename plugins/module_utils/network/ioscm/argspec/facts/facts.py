@@ -13,9 +13,6 @@ __metaclass__ = type
 class FactsArgs:
     """The arg spec for the ioscm facts module."""
 
-    def __init__(self, **kwargs) -> None:
-        pass
-
     argument_spec = {
         "gather_subset": {"default": ["min"], "type": "list", "elements": "str"},
         "gather_network_resources": {"type": "list", "elements": "str"},

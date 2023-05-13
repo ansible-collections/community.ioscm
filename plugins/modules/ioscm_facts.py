@@ -209,10 +209,10 @@ ansible_net_neighbors:
   type: dict
 """
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.argspec.facts.facts import (
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.argspec.facts.facts import (
     FactsArgs,
 )
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.facts.facts import (
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.facts.facts import (
     FACT_RESOURCE_SUBSETS,
     Facts,
 )
