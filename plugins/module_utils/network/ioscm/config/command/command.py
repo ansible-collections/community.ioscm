@@ -28,7 +28,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     to_lines,
     transform_commands,
 )
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import run_commands
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.ioscm import (
+    run_commands,
+)
 
 
 class Command:

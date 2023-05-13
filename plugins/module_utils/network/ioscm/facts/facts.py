@@ -17,7 +17,7 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import (
     FactsBase,
 )
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.facts.legacy.base import (
+from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.facts.legacy.base import (
     Config,
     Default,
     Hardware,
