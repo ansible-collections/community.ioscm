@@ -209,7 +209,7 @@ jobs:
             python: '2.6'
           - ansible: devel
             python: '2.6'
-            
+
 
     steps:
       - name: >-

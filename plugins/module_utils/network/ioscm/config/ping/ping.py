@@ -18,8 +18,8 @@ created.
 """
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
-from ansible_collections.cisco.ios.plugins.module_utils.network.ios.ios import run_commands
-from ansible_collections.cisco.ios.plugins.module_utils.network.ios.rm_templates.ping import (
+from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import run_commands
+from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.rm_templates.ping import (
     PingTemplate,
 )
 

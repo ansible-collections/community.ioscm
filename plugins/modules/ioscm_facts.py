@@ -209,7 +209,6 @@ ansible_net_neighbors:
   type: dict
 """
 from ansible.module_utils.basic import AnsibleModule
-
 from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.argspec.facts.facts import (
     FactsArgs,
 )
@@ -221,7 +220,7 @@ from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.facts.fa
 
 def main():
     """
-    Main entry point for module execution
+    Main entry point for module execution.
 
     :returns: ansible_facts
     """
@@ -232,7 +231,7 @@ def main():
     ansible_facts = {}
     if module.params.get("available_network_resources"):
         ansible_facts["available_network_resources"] = sorted(
-            FACT_RESOURCE_SUBSETS.keys()
+            FACT_RESOURCE_SUBSETS.keys(),
         )
     result = Facts(module).get_facts()
     additional_facts, additional_warnings = result

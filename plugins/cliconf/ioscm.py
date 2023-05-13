@@ -60,9 +60,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.c
     NetworkConfig,
     dumps,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.cliconf_base import (
     CliconfBase,
     enable_mode,
@@ -70,9 +68,9 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.cliconf_base imp
 
 
 class Cliconf(CliconfBase):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self._device_info = {}
-        super(Cliconf, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @enable_mode
     def get_config(self, source="running", flags=None, format=None):
@@ -81,15 +79,12 @@ class Cliconf(CliconfBase):
 
         if format:
             raise ValueError(
-                "'format' value %s is not supported for get_config" % format
+                "'format' value %s is not supported for get_config" % format,
             )
 
         if not flags:
             flags = []
-        if source == "running":
-            cmd = "show running-config "
-        else:
-            cmd = "show startup-config "
+        cmd = "show running-config " if source == "running" else "show startup-config "
 
         cmd += " ".join(to_list(flags))
         cmd = cmd.strip()
@@ -136,7 +131,7 @@ class Cliconf(CliconfBase):
                {
                    'config_diff': '',
                    'banner_diff': {}
-               }
+               }.
         """
         diff = {}
         device_operations = self.get_device_operations()
@@ -147,14 +142,18 @@ class Cliconf(CliconfBase):
 
         if diff_match not in option_values["diff_match"]:
             raise ValueError(
-                "'match' value %s in invalid, valid values are %s"
-                % (diff_match, ", ".join(option_values["diff_match"])),
+                "'match' value {} in invalid, valid values are {}".format(
+                    diff_match,
+                    ", ".join(option_values["diff_match"]),
+                ),
             )
 
         if diff_replace not in option_values["diff_replace"]:
             raise ValueError(
-                "'replace' value %s in invalid, valid values are %s"
-                % (diff_replace, ", ".join(option_values["diff_replace"])),
+                "'replace' value {} in invalid, valid values are {}".format(
+                    diff_replace,
+                    ", ".join(option_values["diff_replace"]),
+                ),
             )
 
         cand_pattern = r"(?P<parent>^\w.*\n?)(?P<child>(?:\s+.*\n?)*)"
@@ -207,9 +206,7 @@ class Cliconf(CliconfBase):
                 wants = ""
                 for line in want_lines:
                     if line not in have_lines:
-                        wants += "".join(
-                            f"{i}\n" for i in line.parents if i not in wants
-                        )
+                        wants += "".join(f"{i}\n" for i in line.parents if i not in wants)
                         wants += f"{line}\n"
 
                 diff["config_diff"] += wants
@@ -241,9 +238,7 @@ class Cliconf(CliconfBase):
                 configdiffobjs = candidate_obj.items
                 have_banners = {}
 
-            diff["config_diff"] = (
-                dumps(configdiffobjs, "commands") if configdiffobjs else ""
-            )
+            diff["config_diff"] = dumps(configdiffobjs, "commands") if configdiffobjs else ""
             banners = self._diff_banners(want_banners, have_banners)
             diff["banner_diff"] = banners if banners else {}
 
@@ -289,7 +284,7 @@ class Cliconf(CliconfBase):
                {
                    'config_diff': '',
                    'banner_diff': {}
-               }
+               }.
         """
         diff = {}
         device_operations = self.get_device_operations()
@@ -300,14 +295,18 @@ class Cliconf(CliconfBase):
 
         if diff_match not in option_values["diff_match"]:
             raise ValueError(
-                "'match' value %s in invalid, valid values are %s"
-                % (diff_match, ", ".join(option_values["diff_match"])),
+                "'match' value {} in invalid, valid values are {}".format(
+                    diff_match,
+                    ", ".join(option_values["diff_match"]),
+                ),
             )
 
         if diff_replace not in option_values["diff_replace"]:
             raise ValueError(
-                "'replace' value %s in invalid, valid values are %s"
-                % (diff_replace, ", ".join(option_values["diff_replace"])),
+                "'replace' value {} in invalid, valid values are {}".format(
+                    diff_replace,
+                    ", ".join(option_values["diff_replace"]),
+                ),
             )
 
         cand_pattern = r"(?P<parent>^\w.*\n?)(?P<child>(?:\s+.*\n?)*)"
@@ -360,9 +359,7 @@ class Cliconf(CliconfBase):
                 wants = ""
                 for line in want_lines:
                     if line not in have_lines:
-                        wants += "".join(
-                            f"{i}\n" for i in line.parents if i not in wants
-                        )
+                        wants += "".join(f"{i}\n" for i in line.parents if i not in wants)
                         wants += f"{line}\n"
 
                 diff["config_diff"] += wants
@@ -394,9 +391,7 @@ class Cliconf(CliconfBase):
                 configdiffobjs = candidate_obj.items
                 have_banners = {}
 
-            diff["config_diff"] = (
-                dumps(configdiffobjs, "commands") if configdiffobjs else ""
-            )
+            diff["config_diff"] = dumps(configdiffobjs, "commands") if configdiffobjs else ""
             banners = self._diff_banners(want_banners, have_banners)
             diff["banner_diff"] = banners if banners else {}
 
@@ -407,7 +402,7 @@ class Cliconf(CliconfBase):
         """
         Enter global configuration mode based on the
         status of commit_confirm
-        :return: None
+        :return: None.
         """
         self.send_command("config-transaction")
 
@@ -416,13 +411,16 @@ class Cliconf(CliconfBase):
         resp = {}
         operations = self.get_device_operations()
         self.check_edit_config_capability(
-            operations, candidate, commit, replace, comment
+            operations,
+            candidate,
+            commit,
+            replace,
+            comment,
         )
 
         results = []
         requests = []
         # commit confirm specific attributes
-        # commit_confirm = self.get_option("commit_confirm_immediate")
         if commit:
             self.configure()
             for line in to_list(candidate):
@@ -436,7 +434,6 @@ class Cliconf(CliconfBase):
             self.send_command("commit")
             self.send_command("end")
             # if commit_confirm:
-            #     self.send_command("configure confirm")
 
         else:
             raise ValueError("check mode is not supported")
@@ -452,12 +449,16 @@ class Cliconf(CliconfBase):
           parents: "macro name {{ macro_name }}"
           after: '@'
           match: line
-          replace: block
+          replace: block.
         """
         resp = {}
         operations = self.get_device_operations()
         self.check_edit_config_capability(
-            operations, candidate, commit, replace, comment
+            operations,
+            candidate,
+            commit,
+            replace,
+            comment,
         )
 
         results = []
@@ -578,7 +579,7 @@ class Cliconf(CliconfBase):
         }
 
     def get_capabilities(self):
-        result = super(Cliconf, self).get_capabilities()
+        result = super().get_capabilities()
         result["rpc"] += [
             "edit_banner",
             "get_diff",
@@ -599,7 +600,7 @@ class Cliconf(CliconfBase):
         :param diff: Boolean flag to indicate if configuration that is applied on remote host should
                      generated and returned in response or not
         :return: Returns response of executing the configuration command received
-             from remote host
+             from remote host.
         """
         resp = {}
         banners_obj = json.loads(candidate)
@@ -628,7 +629,7 @@ class Cliconf(CliconfBase):
         if commands is None:
             raise ValueError("'commands' value is required")
 
-        responses = list()
+        responses = []
         for cmd in to_list(commands):
             if not isinstance(cmd, Mapping):
                 cmd = {"command": cmd}
@@ -636,7 +637,7 @@ class Cliconf(CliconfBase):
             output = cmd.pop("output", None)
             if output:
                 raise ValueError(
-                    "'output' value %s is not supported for run_commands" % output
+                    "'output' value %s is not supported for run_commands" % output,
                 )
 
             try:
@@ -654,7 +655,7 @@ class Cliconf(CliconfBase):
         """
         The method identifies the filter that should be used to fetch running-configuration
         with defaults.
-        :return: valid default filter
+        :return: valid default filter.
         """
         out = self.get("show running-config ?")
         out = to_text(out, errors="surrogate_then_replace")
@@ -672,7 +673,7 @@ class Cliconf(CliconfBase):
     def set_cli_prompt_context(self):
         """
         Make sure we are in the operational cli mode
-        :return: None
+        :return: None.
         """
         if self._connection.connected:
             out = self._connection.get_prompt()
@@ -684,10 +685,12 @@ class Cliconf(CliconfBase):
                 )
 
             if re.search(
-                r"config.*\)#", to_text(out, errors="surrogate_then_replace").strip()
+                r"config.*\)#",
+                to_text(out, errors="surrogate_then_replace").strip(),
             ):
                 self._connection.queue_message(
-                    "vvvv", "wrong context, sending end to device"
+                    "vvvv",
+                    "wrong context, sending end to device",
                 )
                 self._connection.send_command("end")
 

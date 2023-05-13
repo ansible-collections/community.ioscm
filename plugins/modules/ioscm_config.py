@@ -368,7 +368,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.c
     NetworkConfig,
     dumps,
 )
-
 from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import (
     get_config,
     get_connection,
@@ -378,11 +377,10 @@ from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm im
 
 
 def check_args(module, warnings):
-    if module.params["multiline_delimiter"]:
-        if len(module.params["multiline_delimiter"]) != 1:
-            module.fail_json(
-                msg="multiline_delimiter value can only be a single character"
-            )
+    if module.params["multiline_delimiter"] and len(module.params["multiline_delimiter"]) != 1:
+        module.fail_json(
+            msg="multiline_delimiter value can only be a single character",
+        )
 
 
 def edit_config_or_macro(connection, commands):
@@ -400,7 +398,7 @@ def get_candidate_config(module):
         candidate = module.params["src"]
     elif module.params["lines"]:
         candidate_obj = NetworkConfig(indent=1)
-        parents = module.params["parents"] or list()
+        parents = module.params["parents"] or []
         candidate_obj.add(module.params["lines"], parents=parents)
         candidate = dumps(candidate_obj, "raw")
     return candidate
@@ -427,28 +425,29 @@ def save_config(module, result):
 
 
 def main():
-    """main entry point for module execution"""
-    backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
-    argument_spec = dict(
-        src=dict(type="str"),
-        lines=dict(aliases=["commands"], type="list", elements="str"),
-        parents=dict(type="list", elements="str"),
-        before=dict(type="list", elements="str"),
-        after=dict(type="list", elements="str"),
-        match=dict(default="line", choices=["line", "strict", "exact", "none"]),
-        replace=dict(default="line", choices=["line", "block"]),
-        multiline_delimiter=dict(default="@"),
-        running_config=dict(aliases=["config"]),
-        intended_config=dict(),
-        defaults=dict(type="bool", default=False),
-        backup=dict(type="bool", default=False),
-        backup_options=dict(type="dict", options=backup_spec),
-        save_when=dict(
-            choices=["always", "never", "modified", "changed"], default="never"
-        ),
-        diff_against=dict(choices=["startup", "intended", "running"]),
-        diff_ignore_lines=dict(type="list", elements="str"),
-    )
+    """Main entry point for module execution."""
+    backup_spec = {"filename": {}, "dir_path": {"type": "path"}}
+    argument_spec = {
+        "src": {"type": "str"},
+        "lines": {"aliases": ["commands"], "type": "list", "elements": "str"},
+        "parents": {"type": "list", "elements": "str"},
+        "before": {"type": "list", "elements": "str"},
+        "after": {"type": "list", "elements": "str"},
+        "match": {"default": "line", "choices": ["line", "strict", "exact", "none"]},
+        "replace": {"default": "line", "choices": ["line", "block"]},
+        "multiline_delimiter": {"default": "@"},
+        "running_config": {"aliases": ["config"]},
+        "intended_config": {},
+        "defaults": {"type": "bool", "default": False},
+        "backup": {"type": "bool", "default": False},
+        "backup_options": {"type": "dict", "options": backup_spec},
+        "save_when": {
+            "choices": ["always", "never", "modified", "changed"],
+            "default": "never",
+        },
+        "diff_against": {"choices": ["startup", "intended", "running"]},
+        "diff_ignore_lines": {"type": "list", "elements": "str"},
+    }
     mutually_exclusive = [("lines", "src"), ("parents", "src")]
     required_if = [
         ("match", "strict", ["lines"]),
@@ -463,7 +462,7 @@ def main():
         supports_check_mode=True,
     )
     result = {"changed": False}
-    warnings = list()
+    warnings = []
     check_args(module, warnings)
     result["warnings"] = warnings
     diff_ignore_lines = module.params["diff_ignore_lines"]
@@ -471,11 +470,7 @@ def main():
     contents = None
     flags = get_defaults_flag(module) if module.params["defaults"] else []
     connection = get_connection(module)
-    if (
-        module.params["backup"]
-        or module._diff
-        and module.params["diff_against"] == "running"
-    ):
+    if module.params["backup"] or module._diff and module.params["diff_against"] == "running":
         contents = get_config(module, flags=flags)
         config = NetworkConfig(indent=1, contents=contents)
         if module.params["backup"]:
@@ -527,10 +522,14 @@ def main():
     elif module.params["save_when"] == "modified":
         output = run_commands(module, ["show running-config", "show startup-config"])
         running_config = NetworkConfig(
-            indent=1, contents=output[0], ignore_lines=diff_ignore_lines
+            indent=1,
+            contents=output[0],
+            ignore_lines=diff_ignore_lines,
         )
         startup_config = NetworkConfig(
-            indent=1, contents=output[1], ignore_lines=diff_ignore_lines
+            indent=1,
+            contents=output[1],
+            ignore_lines=diff_ignore_lines,
         )
         if running_config.sha1 != startup_config.sha1:
             save_config(module, result)
@@ -545,12 +544,14 @@ def main():
 
         # recreate the object in order to process diff_ignore_lines
         running_config = NetworkConfig(
-            indent=1, contents=contents, ignore_lines=diff_ignore_lines
+            indent=1,
+            contents=contents,
+            ignore_lines=diff_ignore_lines,
         )
         if module.params["diff_against"] == "running":
             if module.check_mode:
                 module.warn(
-                    "unable to perform diff against running-config due to check mode"
+                    "unable to perform diff against running-config due to check mode",
                 )
                 contents = None
             else:
@@ -565,7 +566,9 @@ def main():
             contents = module.params["intended_config"]
         if contents is not None:
             base_config = NetworkConfig(
-                indent=1, contents=contents, ignore_lines=diff_ignore_lines
+                indent=1,
+                contents=contents,
+                ignore_lines=diff_ignore_lines,
             )
             if running_config.sha1 != base_config.sha1:
                 before, after = "", ""

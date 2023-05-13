@@ -1,5 +1,4 @@
 #
-# -*- coding: utf-8 -*-
 # Copyright 2019 Red Hat
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -22,7 +21,6 @@ import re
 
 from ansible.module_utils.six import iteritems
 from ansible.module_utils.six.moves import zip
-
 from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import (
     get_capabilities,
     normalize_interface,
@@ -30,18 +28,20 @@ from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm im
 )
 
 
-class FactsBase(object):
-    COMMANDS = list()
+class FactsBase:
+    COMMANDS = []
 
-    def __init__(self, module):
+    def __init__(self, module) -> None:
         self.module = module
-        self.facts = dict()
-        self.warnings = list()
+        self.facts = {}
+        self.warnings = []
         self.responses = None
 
     def populate(self):
         self.responses = run_commands(
-            self.module, commands=self.COMMANDS, check_rc=False
+            self.module,
+            commands=self.COMMANDS,
+            check_rc=False,
         )
 
     def run(self, cmd):
@@ -52,13 +52,14 @@ class Default(FactsBase):
     COMMANDS = ["show version", "show switch virtual", "show inventory"]
 
     def populate(self):
-        super(Default, self).populate()
+        super().populate()
         self.facts.update(self.platform_facts())
         data = self.responses[0]
         if data:
             self.facts["iostype"] = self.parse_iostype(data)
             self.facts["operatingmode"] = self.parse_operatingmode(
-                data, self.facts["iostype"]
+                data,
+                self.facts["iostype"],
             )
             self.facts["serialnum"] = self.parse_serialnum(data)
             self.parse_stacks(data)
@@ -86,6 +87,7 @@ class Default(FactsBase):
         match = re.search(r"board ID (\S+)", data)
         if match:
             return match.group(1)
+        return None
 
     def parse_stacks(self, data):
         match = re.findall(r"^Model [Nn]umber\s+: (\S+)", data, re.M)
@@ -132,8 +134,8 @@ class Hardware(FactsBase):
     COMMANDS = ["dir", "show memory statistics"]
 
     def populate(self):
-        warnings = list()
-        super(Hardware, self).populate()
+        warnings = []
+        super().populate()
         data = self.responses[0]
         if data:
             self.facts["filesystems"] = self.parse_filesystems(data)
@@ -144,9 +146,7 @@ class Hardware(FactsBase):
             if "Invalid input detected" in data:
                 warnings.append("Unable to gather memory statistics")
             else:
-                processor_line = [
-                    line for line in data.splitlines() if "Processor" in line
-                ].pop()
+                processor_line = [line for line in data.splitlines() if "Processor" in line].pop()
                 match = re.findall(r"\s(\d+)\s", processor_line)
                 if match:
                     self.facts["memtotal_mb"] = int(match[0]) / 1024
@@ -156,13 +156,13 @@ class Hardware(FactsBase):
         return re.findall(r"^Directory of (\S+)/", data, re.M)
 
     def parse_filesystems_info(self, data):
-        facts = dict()
+        facts = {}
         fs = ""
         for line in data.split("\n"):
             match = re.match(r"^Directory of (\S+)/", line)
             if match:
                 fs = match.group(1)
-                facts[fs] = dict()
+                facts[fs] = {}
                 continue
             match = re.match(r"^(\d+) bytes total \((\d+) bytes free\)", line)
             if match:
@@ -175,7 +175,7 @@ class Config(FactsBase):
     COMMANDS = ["show running-config"]
 
     def populate(self):
-        super(Config, self).populate()
+        super().populate()
         data = self.responses[0]
         if data:
             data = re.sub(
@@ -198,10 +198,10 @@ class Interfaces(FactsBase):
     ]
 
     def populate(self):
-        super(Interfaces, self).populate()
+        super().populate()
 
-        self.facts["all_ipv4_addresses"] = list()
-        self.facts["all_ipv6_addresses"] = list()
+        self.facts["all_ipv4_addresses"] = []
+        self.facts["all_ipv6_addresses"] = []
         self.facts["neighbors"] = {}
 
         data = self.responses[0]
@@ -234,13 +234,13 @@ class Interfaces(FactsBase):
             cdp_neighbors = self.run(["show cdp neighbors detail"])
             if cdp_neighbors:
                 self.facts["neighbors"].update(
-                    self.parse_cdp_neighbors(cdp_neighbors[0])
+                    self.parse_cdp_neighbors(cdp_neighbors[0]),
                 )
 
     def populate_interfaces(self, interfaces):
-        facts = dict()
+        facts = {}
         for key, value in iteritems(interfaces):
-            intf = dict()
+            intf = {}
             intf["description"] = self.parse_description(value)
             intf["macaddress"] = self.parse_macaddress(value)
 
@@ -257,7 +257,7 @@ class Interfaces(FactsBase):
 
     def populate_ipv4_interfaces(self, data):
         for key, value in data.items():
-            self.facts["interfaces"][key]["ipv4"] = list()
+            self.facts["interfaces"][key]["ipv4"] = []
             primary_address = addresses = []
             primary_address = re.findall(r"Internet address is (.+)$", value, re.M)
             addresses = re.findall(r"Secondary address (.+)$", value, re.M)
@@ -266,21 +266,21 @@ class Interfaces(FactsBase):
             addresses.append(primary_address[0])
             for address in addresses:
                 addr, subnet = address.split("/")
-                ipv4 = dict(address=addr.strip(), subnet=subnet.strip())
+                ipv4 = {"address": addr.strip(), "subnet": subnet.strip()}
                 self.add_ip_address(addr.strip(), "ipv4")
                 self.facts["interfaces"][key]["ipv4"].append(ipv4)
 
     def populate_ipv6_interfaces(self, data):
         for key, value in iteritems(data):
             try:
-                self.facts["interfaces"][key]["ipv6"] = list()
+                self.facts["interfaces"][key]["ipv6"] = []
             except KeyError:
-                self.facts["interfaces"][key] = dict()
-                self.facts["interfaces"][key]["ipv6"] = list()
+                self.facts["interfaces"][key] = {}
+                self.facts["interfaces"][key]["ipv6"] = []
             addresses = re.findall(r"\s+(.+), subnet", value, re.M)
             subnets = re.findall(r", subnet is (.+)$", value, re.M)
             for addr, subnet in zip(addresses, subnets):
-                ipv6 = dict(address=addr.strip(), subnet=subnet.strip())
+                ipv6 = {"address": addr.strip(), "subnet": subnet.strip()}
                 self.add_ip_address(addr.strip(), "ipv6")
                 self.facts["interfaces"][key]["ipv6"].append(ipv6)
 
@@ -291,9 +291,9 @@ class Interfaces(FactsBase):
             self.facts["all_ipv6_addresses"].append(address)
 
     def parse_neighbors(self, neighbors):
-        facts = dict()
+        facts = {}
         for entry in neighbors.split(
-            "------------------------------------------------"
+            "------------------------------------------------",
         ):
             if entry == "":
                 continue
@@ -302,8 +302,8 @@ class Interfaces(FactsBase):
                 return facts
             intf = normalize_interface(intf)
             if intf not in facts:
-                facts[intf] = list()
-            fact = dict()
+                facts[intf] = []
+            fact = {}
             fact["host"] = self.parse_lldp_host(entry)
             fact["port"] = self.parse_lldp_port(entry)
             fact["ip"] = self.parse_lldp_ip(entry)
@@ -311,7 +311,7 @@ class Interfaces(FactsBase):
         return facts
 
     def parse_cdp_neighbors(self, neighbors):
-        facts = dict()
+        facts = {}
         for entry in neighbors.split("-------------------------"):
             if entry == "":
                 continue
@@ -320,8 +320,8 @@ class Interfaces(FactsBase):
                 return facts
             intf, port = intf_port
             if intf not in facts:
-                facts[intf] = list()
-            fact = dict()
+                facts[intf] = []
+            fact = {}
             fact["host"] = self.parse_cdp_host(entry)
             fact["platform"] = self.parse_cdp_platform(entry)
             fact["port"] = port
@@ -330,7 +330,7 @@ class Interfaces(FactsBase):
         return facts
 
     def parse_interfaces(self, data):
-        parsed = dict()
+        parsed = {}
         key = ""
         for line in data.split("\n"):
             if len(line) == 0:
@@ -348,91 +348,111 @@ class Interfaces(FactsBase):
         match = re.search(r"Description: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_macaddress(self, data):
         match = re.search(r"Hardware is (?:.*), address is (\S+)", data)
         if match:
             return match.group(1)
+        return None
 
     def parse_ipv4(self, data):
         match = re.search(r"Internet address is (\S+)", data)
         if match:
             addr, masklen = match.group(1).split("/")
-            return dict(address=addr, masklen=int(masklen))
+            return {"address": addr, "masklen": int(masklen)}
+        return None
 
     def parse_mtu(self, data):
         match = re.search(r"MTU (\d+)", data)
         if match:
             return int(match.group(1))
+        return None
 
     def parse_bandwidth(self, data):
         match = re.search(r"BW (\d+)", data)
         if match:
             return int(match.group(1))
+        return None
 
     def parse_duplex(self, data):
         match = re.search(r"(\w+) Duplex", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_mediatype(self, data):
         match = re.search(r"media type is (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_type(self, data):
         match = re.search(r"Hardware is (.+),", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_lineprotocol(self, data):
         match = re.search(r"line protocol is (up|down)(.+)?$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_operstatus(self, data):
         match = re.search(r"^(?:.+) is (.+),", data, re.M)
         if match:
             return (match.group(1)).lstrip()
+        return None
 
     def parse_lldp_intf(self, data):
         match = re.search(r"^Local Intf: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_lldp_host(self, data):
         match = re.search(r"System Name: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_lldp_port(self, data):
         match = re.search(r"Port id: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_lldp_ip(self, data):
         match = re.search(r"^    IP: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_cdp_intf_port(self, data):
         match = re.search(
-            r"^Interface: (.+),  Port ID \(outgoing port\): (.+)$", data, re.M
+            r"^Interface: (.+),  Port ID \(outgoing port\): (.+)$",
+            data,
+            re.M,
         )
         if match:
             return match.group(1), match.group(2)
+        return None
 
     def parse_cdp_host(self, data):
         match = re.search(r"^Device ID: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_cdp_platform(self, data):
         match = re.search(r"^Platform: (.+),", data, re.M)
         if match:
             return match.group(1)
+        return None
 
     def parse_cdp_ip(self, data):
         match = re.search(r"^  IP address: (.+)$", data, re.M)
         if match:
             return match.group(1)
+        return None

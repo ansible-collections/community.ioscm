@@ -17,22 +17,17 @@ necessary to bring the current configuration to its desired end-state is
 created.
 """
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    utils,
-)
-from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import (
-    run_commands,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_lines,
-    transform_commands,
-)
 import time
 
 from ansible.module_utils._text import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import (
     Conditional,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_lines,
+    transform_commands,
+)
+from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.ioscm import run_commands
 
 
 class Command:
@@ -66,10 +61,10 @@ class Command:
         """Generate configuration commands to send based on
         want, have and desired state.
         """
-        warnings = list()
+        warnings = []
         result = {"changed": False, "warnings": warnings}
         commands = self.parse_commands(self.module, warnings)
-        wait_for = self.module.params["wait_for"] or list()
+        wait_for = self.module.params["wait_for"] or []
         conditionals = []
         try:
             conditionals = [Conditional(c) for c in wait_for]
@@ -83,7 +78,7 @@ class Command:
             for item in list(conditionals):
                 if item(responses):
                     if match == "any":
-                        conditionals = list()
+                        conditionals = []
                         break
                     conditionals.remove(item)
             if not conditionals:

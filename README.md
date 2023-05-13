@@ -1,7 +1,7 @@
 # Cisco IOS Collection
 
-[![CI](https://zuul-ci.org/gated.svg)](https://dashboard.zuul.ansible.com/t/ansible/project/github.com/ansible-collections/cisco.ios) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/vyos)](https://codecov.io/gh/ansible-collections/cisco.ios)-->
-[![Codecov](https://codecov.io/gh/ansible-collections/cisco.ios/branch/main/graph/badge.svg)](https://codecov.io/gh/ansible-collections/cisco.ios)
+[![CI](https://zuul-ci.org/gated.svg)](https://dashboard.zuul.ansible.com/t/ansible/project/github.com/ansible-collections/cisco.ioscm) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/vyos)](https://codecov.io/gh/ansible-collections/cisco.ios)-->
+[![Codecov](https://codecov.io/gh/ansible-collections/cisco.ios/branch/main/graph/badge.svg)](https://codecov.io/gh/ansible-collections/cisco.ioscm)
 
 The Ansible Cisco IOS collection includes a variety of Ansible content to help automate the management of Cisco IOS and Cisco IOS XE network appliances.
 
@@ -29,47 +29,15 @@ The Cisco IOS collection supports `network_cli` connections.
 ### Cliconf plugins
 Name | Description
 --- | ---
-[cisco.ios.ios](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_cliconf.rst)|Use ios cliconf to run command on Cisco IOS platform
+[cisco.ioscm.ioscm](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_cliconf.rst)|Use ios cliconf to run command on Cisco IOS platform
 
 ### Modules
 Name | Description
 --- | ---
-[cisco.ios.ios_acl_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_acl_interfaces_module.rst)|Resource module to configure ACL interfaces.
-[cisco.ios.ios_acls](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_acls_module.rst)|Resource module to configure ACLs.
-[cisco.ios.ios_banner](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_banner_module.rst)|Module to configure multiline banners.
-[cisco.ios.ios_bgp](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_bgp_module.rst)|Module to configure BGP protocol settings.
-[cisco.ios.ios_bgp_address_family](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_bgp_address_family_module.rst)|Resource module to configure BGP Address family.
-[cisco.ios.ios_bgp_global](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_bgp_global_module.rst)|Resource module to configure BGP.
-[cisco.ios.ios_command](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_command_module.rst)|Module to run commands on remote devices.
-[cisco.ios.ios_config](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_config_module.rst)|Module to manage configuration sections.
-[cisco.ios.ios_facts](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_facts_module.rst)|Module to collect facts from remote devices.
-[cisco.ios.ios_hostname](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_hostname_module.rst)|Resource module to configure hostname.
-[cisco.ios.ios_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_interfaces_module.rst)|Resource module to configure interfaces.
-[cisco.ios.ios_l2_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_l2_interfaces_module.rst)|Resource Module to configure L2 interfaces.
-[cisco.ios.ios_l3_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_l3_interfaces_module.rst)|Resource module to configure L3 interfaces.
-[cisco.ios.ios_lacp](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_lacp_module.rst)|Resource module to configure LACP.
-[cisco.ios.ios_lacp_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_lacp_interfaces_module.rst)|Resource module to configure LACP interfaces.
-[cisco.ios.ios_lag_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_lag_interfaces_module.rst)|Resource module to configure LAG interfaces.
-[cisco.ios.ios_linkagg](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_linkagg_module.rst)|Module to configure link aggregation groups.
-[cisco.ios.ios_lldp](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_lldp_module.rst)|(deprecated, removed after 2024-06-01) Manage LLDP configuration on Cisco IOS network devices.
-[cisco.ios.ios_lldp_global](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_lldp_global_module.rst)|Resource module to configure LLDP.
-[cisco.ios.ios_lldp_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_lldp_interfaces_module.rst)|Resource module to configure LLDP interfaces.
-[cisco.ios.ios_logging](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_logging_module.rst)|(deprecated, removed after 2023-06-01) Manage logging on network devices
-[cisco.ios.ios_logging_global](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_logging_global_module.rst)|Resource module to configure logging.
-[cisco.ios.ios_ntp](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_ntp_module.rst)|(deprecated, removed after 2024-01-01) Manages core NTP configuration.
-[cisco.ios.ios_ntp_global](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_ntp_global_module.rst)|Resource module to configure NTP.
-[cisco.ios.ios_ospf_interfaces](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_ospf_interfaces_module.rst)|Resource module to configure OSPF interfaces.
-[cisco.ios.ios_ospfv2](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_ospfv2_module.rst)|Resource module to configure OSPFv2.
-[cisco.ios.ios_ospfv3](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_ospfv3_module.rst)|Resource module to configure OSPFv3.
-[cisco.ios.ios_ping](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_ping_module.rst)|Tests reachability using ping from IOS switch.
-[cisco.ios.ios_prefix_lists](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_prefix_lists_module.rst)|Resource module to configure prefix lists.
-[cisco.ios.ios_route_maps](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_route_maps_module.rst)|Resource module to configure route maps.
-[cisco.ios.ios_snmp_server](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_snmp_server_module.rst)|Resource module to configure snmp server.
-[cisco.ios.ios_static_routes](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_static_routes_module.rst)|Resource module to configure static routes.
-[cisco.ios.ios_system](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_system_module.rst)|Module to manage the system attributes.
-[cisco.ios.ios_user](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_user_module.rst)|Module to manage the aggregates of local users.
-[cisco.ios.ios_vlans](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_vlans_module.rst)|Resource module to configure VLANs.
-[cisco.ios.ios_vrf](https://github.com/ansible-collections/cisco.ios/blob/main/docs/cisco.ios.ios_vrf_module.rst)|Module to configure VRF definitions.
+[cisco.ioscm.ioscm_command](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_command_module.rst)|Module to run commands on remote devices.
+[cisco.ioscm.ioscm_config](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_config_module.rst)|Module to manage configuration sections.
+[cisco.ioscm.ioscm_facts](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_facts_module.rst)|Module to collect facts from remote devices.
+[cisco.ioscm.ioscm_ping](https://github.com/ansible-collections/cisco.ioscm/blob/main/docs/cisco.ioscm.ioscm_ping_module.rst)|Tests reachability using ping from IOS switch.
 
 <!--end collection content-->
 
@@ -77,7 +45,7 @@ Name | Description
 
 You can install the Cisco IOS collection with the Ansible Galaxy CLI:
 
-    ansible-galaxy collection install cisco.ios
+    ansible-galaxy collection install community.ioscm
 
 You can also include it in a `requirements.yml` file and install it with `ansible-galaxy collection install -r requirements.yml`, using the format:
 

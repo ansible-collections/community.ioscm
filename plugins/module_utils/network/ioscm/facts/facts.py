@@ -1,12 +1,11 @@
 #
-# -*- coding: utf-8 -*-
 # Copyright 2019 Red Hat
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """
 The facts class for ioscm
 this file validates each subset of facts and selectively
-calls the appropriate facts gathering function
+calls the appropriate facts gathering function.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -18,7 +17,6 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import (
     FactsBase,
 )
-
 from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.facts.legacy.base import (
     Config,
     Default,
@@ -27,21 +25,24 @@ from ansible_collections.cisco.ioscm.plugins.module_utils.network.ioscm.facts.le
 )
 
 
-FACT_LEGACY_SUBSETS = dict(
-    default=Default, hardware=Hardware, interfaces=Interfaces, config=Config
-)
+FACT_LEGACY_SUBSETS = {
+    "default": Default,
+    "hardware": Hardware,
+    "interfaces": Interfaces,
+    "config": Config,
+}
 
-FACT_RESOURCE_SUBSETS = dict()
+FACT_RESOURCE_SUBSETS = {}
 
 
 class Facts(FactsBase):
-    """The fact class for ioscm"""
+    """The fact class for ioscm."""
 
     VALID_LEGACY_GATHER_SUBSETS = frozenset(FACT_LEGACY_SUBSETS.keys())
     VALID_RESOURCE_SUBSETS = frozenset(FACT_RESOURCE_SUBSETS.keys())
 
-    def __init__(self, module):
-        super(Facts, self).__init__(module)
+    def __init__(self, module) -> None:
+        super().__init__(module)
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
         """Collect the facts for ioscm
@@ -49,11 +50,13 @@ class Facts(FactsBase):
         :param resource_facts_type: List of resource fact types
         :param data: previously collected conf
         :rtype: dict
-        :return: the facts gathered
+        :return: the facts gathered.
         """
         if self.VALID_RESOURCE_SUBSETS:
             self.get_network_resources_facts(
-                FACT_RESOURCE_SUBSETS, resource_facts_type, data
+                FACT_RESOURCE_SUBSETS,
+                resource_facts_type,
+                data,
             )
 
         if self.VALID_LEGACY_GATHER_SUBSETS:
