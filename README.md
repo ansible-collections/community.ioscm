@@ -59,21 +59,20 @@ This collection includes [network resource modules](https://docs.ansible.com/ans
 
 ### Using modules from the community IOS collection in your playbooks
 
-You can call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.ioscm.interfaces`.
-The following example task replaces configuration changes in the existing configuration on a Community IOSCM network device, using the FQCN:
+You can call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.ioscm.ioscm_config`.
+The following example task to do configuration on a Cisco IOS network device running in controller mode, using the FQCN:
 
 ```yaml
 ---
-- name: Replace device configuration of specified L2 interfaces with provided configuration.
-  community.ioscm.ioscm_interfaces:
-    config:
-      - name: GigabitEthernet0/2
-        trunk:
-          - allowed_vlans: 20-25,40
-            native_vlan: 20
-            pruning_vlans: 10
-            encapsulation: isl
-    state: replaced
+- name: Configure policy in Scavenger class
+  community.ioscm.ioscm_config:
+    lines:
+    - conform-action transmit
+    - exceed-action drop
+    parents:
+    - policy-map Foo
+    - class Scavenger
+    - police cir 64000
 ```
 
 **NOTE**: For Ansible 2.9, you may not see deprecation warnings when you run your playbooks with this collection. Use this documentation to track when a module is deprecated.

@@ -245,7 +245,7 @@ EXAMPLES = """
   - interface Ethernet2
   - interface GigabitEthernet1
 
-- name: Configure policer in Scavenger class
+- name: Configure policy in Scavenger class
   community.ioscm.ioscm_config:
     lines:
     - conform-action transmit
