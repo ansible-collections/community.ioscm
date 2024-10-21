@@ -7,7 +7,7 @@ repos:
       # - id: autoversion
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-merge-conflict
       - id: check-symlinks
@@ -18,19 +18,19 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/asottile/add-trailing-comma.git
-    rev: v2.4.0
+    rev: v3.1.0
     hooks:
       - id: add-trailing-comma
         args:
           - --py36-plus
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks.git
-    rev: v1.5.1
+    rev: v1.5.5
     hooks:
       - id: remove-tabs
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.9-for-vscode"
+    rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
         # Original hook implementation is flaky due to *several* bugs described
@@ -55,12 +55,12 @@ repos:
           - prettier-plugin-toml
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 24.10.0
     hooks:
       - id: black
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.263"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.7.0"
     hooks:
       - id: ruff
         args:
@@ -78,7 +78,7 @@ repos:
       - id: darglint
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v3.0.0a6
+    rev: v3.3.1
     hooks:
       - id: pylint
         args:
@@ -90,7 +90,7 @@ repos:
           - git+https://github.com/ansible-network/pytest-ansible-network-integration.git
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
-    rev: v1.2.0
+    rev: v1.12.1
     hooks:
       - id: mypy
         additional_dependencies:
