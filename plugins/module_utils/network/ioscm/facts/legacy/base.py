@@ -19,8 +19,6 @@ __metaclass__ = type
 import platform
 import re
 
-from ansible.module_utils.six import iteritems
-from ansible.module_utils.six.moves import zip
 from ansible_collections.community.ioscm.plugins.module_utils.network.ioscm.ioscm import (
     get_capabilities,
     normalize_interface,
@@ -239,7 +237,7 @@ class Interfaces(FactsBase):
 
     def populate_interfaces(self, interfaces):
         facts = {}
-        for key, value in iteritems(interfaces):
+        for key, value in interfaces.items():
             intf = {}
             intf["description"] = self.parse_description(value)
             intf["macaddress"] = self.parse_macaddress(value)
@@ -271,7 +269,7 @@ class Interfaces(FactsBase):
                 self.facts["interfaces"][key]["ipv4"].append(ipv4)
 
     def populate_ipv6_interfaces(self, data):
-        for key, value in iteritems(data):
+        for key, value in data.items():
             try:
                 self.facts["interfaces"][key]["ipv6"] = []
             except KeyError:
