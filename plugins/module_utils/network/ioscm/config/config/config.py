@@ -107,8 +107,8 @@ class Config:
         connection = get_connection(self.module)
         if (
             self.module.params["backup"]
-            or self.module._diff
-            and self.module.params["diff_against"] == "running"
+            or (self.module._diff
+            and self.module.params["diff_against"] == "running")
         ):
             contents = get_config(self.module, flags=flags)
             config = NetworkConfig(indent=1, contents=contents)
