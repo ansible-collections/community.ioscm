@@ -159,7 +159,7 @@ class Cliconf(CliconfBase):
         cand_pattern = r"(?P<parent>^\w.*\n?)(?P<child>(?:\s+.*\n?)*)"
         # remove blank lines
         candidate = re.sub("\n\n", "\n", candidate)
-        candidates = re.findall(cand_pattern, candidate, re.M)
+        candidates = re.findall(cand_pattern, candidate, re.MULTILINE)
 
         diff["config_diff"] = ""
         diff["banner_diff"] = {}
@@ -240,7 +240,7 @@ class Cliconf(CliconfBase):
 
             diff["config_diff"] = dumps(configdiffobjs, "commands") if configdiffobjs else ""
             banners = self._diff_banners(want_banners, have_banners)
-            diff["banner_diff"] = banners if banners else {}
+            diff["banner_diff"] = banners or {}
 
         return diff
 
@@ -312,7 +312,7 @@ class Cliconf(CliconfBase):
         cand_pattern = r"(?P<parent>^\w.*\n?)(?P<child>(?:\s+.*\n?)*)"
         # remove blank lines
         candidate = re.sub("\n\n", "\n", candidate)
-        candidates = re.findall(cand_pattern, candidate, re.M)
+        candidates = re.findall(cand_pattern, candidate, re.MULTILINE)
 
         diff["config_diff"] = ""
         diff["banner_diff"] = {}
@@ -393,7 +393,7 @@ class Cliconf(CliconfBase):
 
             diff["config_diff"] = dumps(configdiffobjs, "commands") if configdiffobjs else ""
             banners = self._diff_banners(want_banners, have_banners)
-            diff["banner_diff"] = banners if banners else {}
+            diff["banner_diff"] = banners or {}
 
         return diff
 
@@ -537,13 +537,13 @@ class Cliconf(CliconfBase):
                 r"^[Cc]isco (\S+).+bytes of .*memory",
             ]
             for item in model_search_strs:
-                match = re.search(item, data, re.M)
+                match = re.search(item, data, re.MULTILINE)
                 if match:
                     version = match.group(1).split(" ")
                     device_info["network_os_model"] = version[0]
                     break
 
-            match = re.search(r"^(.+) uptime", data, re.M)
+            match = re.search(r"^(.+) uptime", data, re.MULTILINE)
             if match:
                 device_info["network_os_hostname"] = match.group(1)
 
@@ -667,8 +667,7 @@ class Cliconf(CliconfBase):
 
         if "all" in commands:
             return "all"
-        else:
-            return "full"
+        return "full"
 
     def set_cli_prompt_context(self):
         """
@@ -696,17 +695,17 @@ class Cliconf(CliconfBase):
 
     def _extract_banners(self, config):
         banners = {}
-        banner_cmds = re.findall(r"^banner (\w+)", config, re.M)
+        banner_cmds = re.findall(r"^banner (\w+)", config, re.MULTILINE)
         for cmd in banner_cmds:
             regex = r"banner %s \^C(.+?)(?=\^C)" % cmd
-            match = re.search(regex, config, re.S)
+            match = re.search(regex, config, re.DOTALL)
             if match:
                 key = "banner %s" % cmd
                 banners[key] = match.group(1).strip()
 
         for cmd in banner_cmds:
             regex = r"banner %s \^C(.+?)(?=\^C)" % cmd
-            match = re.search(regex, config, re.S)
+            match = re.search(regex, config, re.DOTALL)
             if match:
                 config = config.replace(str(match.group(1)), "")
 
