@@ -72,16 +72,14 @@ class Default(FactsBase):
         match = re.search(r"\sIOS-XE\s", data)
         if match:
             return "IOS-XE"
-        else:
-            return "IOS"
+        return "IOS"
 
     def parse_operatingmode(self, data, iostype):
         # for older ios versions default being autonomous where operating mode classification not present
         match = re.search(r"Router\soperating\smode: (\S+)", data)
         if (match and "autonomous" in match.group(1).lower()) or iostype == "IOS":
             return "autonomous"
-        else:
-            return "controller"
+        return "controller"
 
     def parse_serialnum(self, data):
         match = re.search(r"board ID (\S+)", data)
@@ -90,11 +88,11 @@ class Default(FactsBase):
         return None
 
     def parse_stacks(self, data):
-        match = re.findall(r"^Model [Nn]umber\s+: (\S+)", data, re.M)
+        match = re.findall(r"^Model [Nn]umber\s+: (\S+)", data, re.MULTILINE)
         if match:
             self.facts["stacked_models"] = match
 
-        match = re.findall(r"^System [Ss]erial [Nn]umber\s+: (\S+)", data, re.M)
+        match = re.findall(r"^System [Ss]erial [Nn]umber\s+: (\S+)", data, re.MULTILINE)
         if match:
             self.facts["stacked_serialnums"] = match
 
@@ -102,12 +100,12 @@ class Default(FactsBase):
             self.facts["virtual_switch"] = "STACK"
 
     def parse_virtual_switch(self, data):
-        match = re.search(r"^Virtual switch domain number : ([0-9]+)", data, re.M)
+        match = re.search(r"^Virtual switch domain number : ([0-9]+)", data, re.MULTILINE)
         if match:
             self.facts["virtual_switch"] = "VSS"
             self.facts["virtual_switch_domain"] = match.group(1)
 
-        match = re.findall(r"System\".*?SN:\s*([^\s]+)", data, re.S)
+        match = re.findall(r"System\".*?SN:\s*([^\s]+)", data, re.DOTALL)
         if match:
             self.facts["virtual_switch_serialnums"] = match
 
@@ -153,7 +151,7 @@ class Hardware(FactsBase):
                     self.facts["memfree_mb"] = int(match[3]) / 1024
 
     def parse_filesystems(self, data):
-        return re.findall(r"^Directory of (\S+)/", data, re.M)
+        return re.findall(r"^Directory of (\S+)/", data, re.MULTILINE)
 
     def parse_filesystems_info(self, data):
         facts = {}
@@ -259,8 +257,8 @@ class Interfaces(FactsBase):
         for key, value in data.items():
             self.facts["interfaces"][key]["ipv4"] = []
             primary_address = addresses = []
-            primary_address = re.findall(r"Internet address is (.+)$", value, re.M)
-            addresses = re.findall(r"Secondary address (.+)$", value, re.M)
+            primary_address = re.findall(r"Internet address is (.+)$", value, re.MULTILINE)
+            addresses = re.findall(r"Secondary address (.+)$", value, re.MULTILINE)
             if len(primary_address) == 0:
                 continue
             addresses.append(primary_address[0])
@@ -277,8 +275,8 @@ class Interfaces(FactsBase):
             except KeyError:
                 self.facts["interfaces"][key] = {}
                 self.facts["interfaces"][key]["ipv6"] = []
-            addresses = re.findall(r"\s+(.+), subnet", value, re.M)
-            subnets = re.findall(r", subnet is (.+)$", value, re.M)
+            addresses = re.findall(r"\s+(.+), subnet", value, re.MULTILINE)
+            subnets = re.findall(r", subnet is (.+)$", value, re.MULTILINE)
             for addr, subnet in zip(addresses, subnets):
                 ipv6 = {"address": addr.strip(), "subnet": subnet.strip()}
                 self.add_ip_address(addr.strip(), "ipv6")
@@ -345,7 +343,7 @@ class Interfaces(FactsBase):
         return parsed
 
     def parse_description(self, data):
-        match = re.search(r"Description: (.+)$", data, re.M)
+        match = re.search(r"Description: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
@@ -376,55 +374,55 @@ class Interfaces(FactsBase):
         return None
 
     def parse_duplex(self, data):
-        match = re.search(r"(\w+) Duplex", data, re.M)
+        match = re.search(r"(\w+) Duplex", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_mediatype(self, data):
-        match = re.search(r"media type is (.+)$", data, re.M)
+        match = re.search(r"media type is (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_type(self, data):
-        match = re.search(r"Hardware is (.+),", data, re.M)
+        match = re.search(r"Hardware is (.+),", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_lineprotocol(self, data):
-        match = re.search(r"line protocol is (up|down)(.+)?$", data, re.M)
+        match = re.search(r"line protocol is (up|down)(.+)?$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_operstatus(self, data):
-        match = re.search(r"^(?:.+) is (.+),", data, re.M)
+        match = re.search(r"^(?:.+) is (.+),", data, re.MULTILINE)
         if match:
             return (match.group(1)).lstrip()
         return None
 
     def parse_lldp_intf(self, data):
-        match = re.search(r"^Local Intf: (.+)$", data, re.M)
+        match = re.search(r"^Local Intf: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_lldp_host(self, data):
-        match = re.search(r"System Name: (.+)$", data, re.M)
+        match = re.search(r"System Name: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_lldp_port(self, data):
-        match = re.search(r"Port id: (.+)$", data, re.M)
+        match = re.search(r"Port id: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_lldp_ip(self, data):
-        match = re.search(r"^    IP: (.+)$", data, re.M)
+        match = re.search(r"^    IP: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
@@ -433,26 +431,26 @@ class Interfaces(FactsBase):
         match = re.search(
             r"^Interface: (.+),  Port ID \(outgoing port\): (.+)$",
             data,
-            re.M,
+            re.MULTILINE,
         )
         if match:
             return match.group(1), match.group(2)
         return None
 
     def parse_cdp_host(self, data):
-        match = re.search(r"^Device ID: (.+)$", data, re.M)
+        match = re.search(r"^Device ID: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_cdp_platform(self, data):
-        match = re.search(r"^Platform: (.+),", data, re.M)
+        match = re.search(r"^Platform: (.+),", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
 
     def parse_cdp_ip(self, data):
-        match = re.search(r"^  IP address: (.+)$", data, re.M)
+        match = re.search(r"^  IP address: (.+)$", data, re.MULTILINE)
         if match:
             return match.group(1)
         return None
